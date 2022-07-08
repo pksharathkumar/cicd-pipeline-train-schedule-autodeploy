@@ -1,22 +1,22 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: petclinic
+  name: train-schedule
   labels:
-    app: petclinic
+    app: train-schedule
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: petclinic
+      app: train-schedule
   template:
     metadata:
       labels:
-        app: petclinic
+        app: train-schedule
     spec:
       containers:
-      - name: petclinic
-        image: lerndevops/petclinic:bno
+      - name: train-schedule
+        image: pksharathkumar/train-schedule:bno
         ports:
         - name: http
           containerPort: 8080
@@ -25,11 +25,11 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: petclinic
+  name: train-schedule
 spec:
   type: NodePort
   selector:
-    app: petclinic
+    app: train-schedule
   ports:
   - port: 80
     targetPort: 8080
