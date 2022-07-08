@@ -1,0 +1,30 @@
+- hosts: "{{ env }}"
+  become: yes
+  tasks: 
+    - name: Deploying Application pods...
+      shell: | 
+         if [ `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep train-schedule | wc -l` -gt 0 ]; then  
+            echo "deleteing previous application deployment"
+            kubectl delete deployment `kubectl get deployment | grep -v NAME | awk '{print $1}' | grep train-schedule`
+            echo "creating new application deployment"
+            kubectl create deployment train-schedule --image=pksharathkumar/train-schedule:{{ build }}
+         else 
+            echo "Deploying train-schedule Application"
+            kubectl create deployment train-schedule --image=pksharathkumar/train-schedule:{{ build }}
+         fi
+    - name: deploying service
+      shell: |
+         if [ `kubectl get svc | grep train-schedule  | awk '{print $1}' | wc -l` -gt 0 ]; then
+            echo "app service found, No actions taken"
+            #kubectl delete svc `kubectl get svc | grep train-schedule | awk '{print $1}'`
+         else
+            echo "Creating App Services"
+            kubectl expose deployment train-schedule --name train-schedule --type NodePort --port 80 --target-port 8080
+         fi
+    - name: increase replicas 
+      shell: kubectl scale deploy train-schedule --replicas=2
+      
+    #- name: deploy app
+    #  shell: kubectl create deployment train-schedule --image=pksharathkumar/samplejavaapp:{{ build }}
+    #- name: deploy service
+    #  shell: kubectl expose deployment train-schedule --name train-schedule --type NodePort --port 80 --target-port 8080
