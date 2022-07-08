@@ -24,7 +24,7 @@ pipeline {
         }
     stage('DeployToProduction') {
   	  steps {
-              sh 'ansible-playbook --inventory /tmp/inv $WORKSPACE/deploy/deploy-kube.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
+              sh 'ansible-playbook --inventory /tmp/inv $WORKSPACE/deploy-kube.yml --extra-vars "env=qa build=$BUILD_NUMBER"'
 	   }
 	   post { 
               always { 
